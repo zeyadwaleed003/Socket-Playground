@@ -1,5 +1,5 @@
 {
-  "name": "socket.io-1",
+  "name": "socket.io-2",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -12,11 +12,16 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "express": "^5.1.0",
     "socket.io": "^4.8.1",
     "ws": "^8.18.3"
   },
   "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.15",
     "@types/ws": "^8.18.1",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }

@@ -1,18 +1,19 @@
+import path from 'path';
+import express from 'express';
 import { Server } from 'socket.io';
-import { createServer } from 'http';
 
-// Create basic HTTP server instance.
-const httpServer = createServer();
+const PORT = process.env.PORT || 3500;
 
-// Initialize a new Socket.IO server attached to the HTTP server
-const io = new Server(httpServer, {
-  cors: {
-    origin:
-      process.env.NODE_ENV === 'production'
-        ? false
-        : ['http://localhost:5500', 'http://127.0.0.1:5500'],
-  },
+const app = express();
+
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
+const expressServer = app.listen(PORT, () => {
+  console.log(`Server running on port: ${PORT}`);
 });
+
+// I don't need the `cors` option anymore because the frontend & backend are hosted on the same server now by express
+const io = new Server(expressServer);
 
 // Listen for a new client connection
 io.on('connection', (socket) => {
@@ -25,6 +26,3 @@ io.on('connection', (socket) => {
     io.emit('message', `${socket.id.substring(0, 5)}: ${data}`);
   });
 });
-
-// Start the HTTP (and Socket.IO) server on port 3500
-httpServer.listen(3500, () => console.log('Server running on port: 3500'));
