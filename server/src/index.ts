@@ -1,18 +1,30 @@
-import { WebSocketServer } from 'ws';
+import { Server } from 'socket.io';
+import { createServer } from 'http';
 
-const wss = new WebSocketServer({ port: 3000 });
+// Create basic HTTP server instance.
+const httpServer = createServer();
 
-// Once we have a connection stablished with websockets
-// Then we will be listening to this socket
-wss.on('connection', (socket) => {
-  // Inside this socket we are listening for a message and do something with it
-  socket.on('message', (message) => {
-    // The message will be received as a buffer. Ex: <Buffer 5a 65 79 61 64>
-    console.log(message);
+// Initialize a new Socket.IO server attached to the HTTP server
+const io = new Server(httpServer, {
+  cors: {
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? false
+        : ['http://localhost:5500', 'http://127.0.0.1:5500'],
+  },
+});
 
-    const messageText = message.toString('utf-8');
-    console.log(messageText);
+// Listen for a new client connection
+io.on('connection', (socket) => {
+  // When a client connects, log their unique socket.id
+  console.log(`User ${socket.id} connected`);
 
-    socket.send(`${message}`);
+  // Listen for 'message' events from the connected client
+  socket.on('message', (data) => {
+    console.log(data);
+    io.emit('message', `${socket.id.substring(0, 5)}: ${data}`);
   });
 });
+
+// Start the HTTP (and Socket.IO) server on port 3500
+httpServer.listen(3500, () => console.log('Server running on port: 3500'));
